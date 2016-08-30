@@ -1,0 +1,55 @@
+
+thread.c create a thread.
+ *
+ */
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int my_flagcount;
+
+void flagcount(void *data)
+{
+  int i4Index;
+  int i4Max = 10;  /* Number of times incrementing extern flagcount. */
+
+  i4Max = atoi( data );
+  printf("::Inside Thread Function:: data %d\n", i4Max);
+
+  for( i4Index = 0; i4Index < i4Max; i4Index++) {
+     printf("Thread flagcount (%d)\n", my_flagcount++);
+     /* Sleep for 10 seconds. */
+     sleep(10);  /* 10 seconds. */
+  }
+
+  printf("::Exiting Thread Function::\n");
+
+  return;
+}
+
+int main ( int argc, char *argv[] )
+{
+  pthread_t      tid;
+  pthread_t      tid2;
+  pthread_t      tid3;
+  pthread_t      tid4;
+  pthread_attr_t attr;
+
+  printf("::main:: argc %d\n", argc);
+  if (argc != 2) {
+    printf("usage: <integer value>\n");
+    return -1;
+  }
+
+  pthread_attr_init(&attr);
+  pthread_create(&tid, &attr, flagcount, argv[1]);
+  pthread_create(&tid2, &attr, flagcount, argv[1]);
+  pthread_create(&tid3, &attr, flagcount, argv[1]);
+  pthread_create(&tid4, &attr, flagcount, argv[1]);
+  pthread_join(tid, NULL);
+  pthread_join(tid2, NULL);
+  pthread_join(tid3, NULL);
+  pthread_join(tid4, NULL);
+  return 0;
+}
+
